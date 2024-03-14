@@ -6,7 +6,7 @@ html {
     box-sizing: inherit;
 }
 body {
-    background-color: #100E17;
+    background-color: midnightblue/*#100E17*/;
     font-family: 'Rubik', sans-serif;
     font-size: 1.6rem;
 }
