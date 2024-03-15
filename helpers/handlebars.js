@@ -23,5 +23,20 @@ module.exports = {
             //cuando encuentre el seleccionado va a agregarle un atributo selected
             new RegExp(`value="${seleccionado}"`), '$& selected="selected"'
         )
+    }, //utilizar mensajes de flash en layout
+    mostrarAlertas: (errores = {}, alertas) => {
+        // alertas es el html llenado en layout, errores lo que se guarda en flash mediante express-validator
+        let html = '';
+
+        // filtrar errores uno a uno
+        const categoria = Object.keys(errores);
+        if(categoria.length) {
+            errores[categoria].forEach(error => {
+                html += `<div class="${categoria} alerta">
+                    ${error}
+                </div>`
+            })
+        }
+        return alertas.fn().html = html;
     }
 }
