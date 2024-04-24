@@ -5,15 +5,28 @@ const shortid = require('shortid');
 
 exports.subirImagen = (req, res, next) => {
     upload(req, res, function(error){
-        if(error instanceof multer.MulterError){
+        if(error){
+            if(error instanceof multer.MulterError){
+                if(error.code === 'LIMIT_FILE_SIZE'){
+                    req.flash('error', 'El archivo es muy grande');
+                }else{
+                    req.flash('error', error.message);
+                }
+            }else{
+                req.flash('error', error.message);
+            }
+            res.redirect('/administracion');
+            return;
+        } else{
             return next();
         }
+
     });
-    next();
 }
 
 // Opciones de Multer
 const configuracionMulter = {
+    limits: { fileSize : 100000 },
     storage: fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, __dirname+'../../public/uploads/perfiles');
@@ -22,7 +35,15 @@ const configuracionMulter = {
             const extension = file.mimetype.split('/')[1];
             cb(null, `${shortid.generate()}.${extension}`);
         }
-    })
+    }),
+    fileFilter(req, file, cb){
+        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+            // el callback se ejecuta como true o false: true cuando se acepta la imagen
+            cb(null, true);
+        }else{
+            cb(new Error('Formato No Válido'), false);
+        }
+    }
 }
 
 const upload = multer(configuracionMulter).single('imagen');
@@ -95,6 +116,7 @@ exports.formEditarPerfil = (req, res) => {
         nombrePagina: 'Edita tu perfil en devJobs',
         usuarioNombre: req.user.nombre,
         usuarioMail: req.user.email,
+        imagen: req.user.imagen,
         cerrarSesion: true,
         nombre: req.user.nombre
     })
@@ -109,6 +131,11 @@ exports.editarPerfil = async (req, res) => {
     if(req.body.password){
         usuario.password = req.body.password
     }
+    
+    if(req.file){
+        usuario.imagen = req.file.filename;
+    }
+
     await usuario.save();
 
     req.flash('correcto', 'Cambios Guardados Correctamente');
@@ -140,6 +167,7 @@ exports.validarPerfil = (req, res, next) => {
             usuarioMail: req.user.email,
             cerrarSesion: true,
             nombre: req.user.nombre,
+            imagen: req.user.imagen,
             mensajes: req.flash()
         })
 
