@@ -79,7 +79,7 @@ const accionesListado = e => {
     e.preventDefault();
 
     if(e.target.dataset.eliminar){
-        // eliminar por axios
+        // eliminar por AXIOS
         Swal.fire({
             title: "¿Confirmar Eliminación?",
             text: "Una vez eliminada, no se puede recuperar",
@@ -92,16 +92,34 @@ const accionesListado = e => {
           }).then((result) => {
             if (result.isConfirmed) {
                 //enviar la petición con AXIOS
+                const url = `${location.origin}/vacantes/eliminar/${e.target.dataset.eliminar}`;
 
-                
-              Swal.fire({
-                title: "Eliminado!",
-                text: "Your file has been deleted.",
-                icon: "success"
-              });
+                // eliminar registro AXIOS
+                axios.delete(url, { params: {url}})
+                    .then(function(respuesta){
+                        if(respuesta.status === 200){
+                           Swal.fire(
+                            'Eliminado',
+                            respuesta.data,
+                            'success'
+                           );
+
+                           // Eliminar del DOM
+                           e.target.parentElement.parentElement.parentElement.removeChild
+                           (e.target.parentElement.parentElement);
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire({
+                            icon:'error',
+                            title: 'Hubo un error',
+                            text: 'No Se pudo eliminar'
+                        })
+                    });
+              
             }
           });
-    }else{
+    }else if (e.target.tagName == 'A'){
         window.location.href = e.target.href;
     }
 }

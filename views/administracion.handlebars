@@ -8,9 +8,10 @@
 
     <h2>Tus Vacantes</h2>
 
+    <div class="panel-administracion">
     {{#if vacantes.length}}
         {{#each vacantes}}
-            <div class="vacante panel-administracion">
+            <div class="vacante">
                 <div class="caja">
                     <h3>{{empresa}}</h3>
                     <p class="puesto">{{titulo}}</p>
@@ -22,7 +23,7 @@
                     <a href="/vacantes/editar/{{url}}" class="btn btn-verde">Editar</a>
                 </div>
                 <div class="centrar-vertical caja">
-                    <a data-eliminar={{id}} href="#"  class="btn btn-rojo">Eliminar</a>
+                    <a data-eliminar={{_id}} href="#" class="btn btn-rojo">Eliminar</a>
                 </div>
             </div>
 
@@ -32,5 +33,6 @@
         <p>No Hay Vacantes, crea una</p>
 
     {{/if}}
+    </div>
 
 </main>
