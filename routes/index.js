@@ -75,6 +75,11 @@ module.exports = () => {
         usuariosController.editarPerfil
     )
 
+    // Recibir msjs de canditados
+    router.post('/vacantes/:url', 
+        vacantesController.subirCV,
+        vacantesController.contactar
+    );
 
     return router;
 }
